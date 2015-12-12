@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+require_relative 'ds18b20'
 require 'sc1602_for_bbb'
 require 'socket'
 
@@ -19,12 +20,9 @@ ports = {
 lcd = SC1602ForBBB::LCD.new(ports)
 lcd.write(">#{get_ipaddr}")
 
-w1 = "/sys/bus/w1/devices/28-000003b71040/w1_slave"
+ds18b20 = DS18B20.new
 while true
-  raw = open(w1, 'r').read
-  celsius = raw.split('t=')[1].chomp.to_i
-  celsius = celsius / 1000.0
-
+  celsius = ds18b20.celsius
   lcd.set_cursor(1, 0)
   lcd.write("%02.3fc" % celsius)
   sleep 0.25
